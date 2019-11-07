@@ -1,31 +1,50 @@
 <?php
 //base64_image_save.php
-  $base64Data=$_POST['base64data'];
-  $path='./image';//$_POST['path'];
-   base64_image_content($base64Data,$path);
+  $poatdata=file_get_contents("php://input");
+  $data=params_parse($poatdata);
+  $rest=base64_image_content($data['base64data'],$data['path'],$data['file_nmae']);
+  echo json_encode($rest);
+
 /**
- * [将Base64图片转换为本地图片并保存]
- * @param $base64_image_content [要保存的Base64]
- * @param $path [要保存的路径]
- * @return bool|string
+ * @param $base64_image_content  [要保存的Base64编码]
+ * @param $path [图片要保存的路径 绝对路径]
+ * @param string $file_name [图片文件名，不带后缀]
+ * @return array
+ * @throws Exception
  */
- function base64_image_content($base64_image_content,$path){
-    //匹配出图片的格式
-    if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)){
-        $type = $result[2];
-        $new_file = $path."/".date('Ymd',time())."/";
-        if(!file_exists($new_file)){
-            //检查是否有该文件夹，如果没有就创建，并给予最高权限
-            mkdir($new_file, 0700);
-          }
-         $new_file = $new_file.time().".{$type}";
-        if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64_image_content)))){
-            return ['code'=>1,'msg'=>'保存成功','img_path'=>$new_file];
-        }else{
-            return  ['code'=>0,'msg'=>'保存失败'];
-        }
-    }else{
-        return  ['code'=>0,'msg'=>'参数错误'];
-    }
+ function base64_image_content($base64_image_content,$path,$file_name=''){
+     try {
+         if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $base64_image_content, $result)) {
+             $type = $result[2];
+             if(!file_exists($path)){
+                 mkdir($path,0777,true);
+             }
+             $new_file = $path .$file_name . ".{$type}";
+             $image_data = str_replace($result[1], '', $base64_image_content);
+             $rest = file_put_contents($new_file, base64_decode($image_data));
+             if ($rest) {
+                 return ['code' => 1, 'msg' => '保存成功', 'img_path' => $new_file];
+             } else {
+                 return ['code' => 0, 'msg' => '保存失败'];
+             }
+         } else {
+             return ['code' => 0, 'msg' => '参数错误'];
+         }
+     }catch (Exception $e){
+        throw new Exception($e->getMessage());
+     }
 }
 
+/**
+ * 请求参数解析成数组格式
+ * @param $data
+ * @return mixed
+ */
+function params_parse($data){
+     $param=explode('&',$data);
+    foreach ($param as $k=>$v){
+        $index=substr($v,0,strpos($v,'='));
+        $temp[$index]=substr($v,strpos($v,'=')+1);;
+    }
+   return $temp;
+}

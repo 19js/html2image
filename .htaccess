@@ -4,5 +4,6 @@
 
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^(.*)$ index.php?/$1 [QSA,PT,L]
+  RewriteRule ^base64_image_save.php$ assets/src/base64_image_save.php
+  #RewriteRule ^(.*)$ index.php?/$1 [QSA,PT,L]
 </IfModule>
