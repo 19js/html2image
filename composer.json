@@ -1,0 +1,19 @@
+{
+    "name": "yangshuanlin/php-html2img",
+    "description": "将 HTML标签转化成图片",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Shuanlin Yang",
+            "email": "yangshuanlinysl@dingtalk.com"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Html2image\\Assets\\": "assets/src/"
+        }
+    }
+}
