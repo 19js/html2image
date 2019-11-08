@@ -2,7 +2,7 @@
 //base64_image_save.php
   $poatdata=file_get_contents("php://input");
   $data=params_parse($poatdata);
-  $rest=base64_image_content($data['base64data'],$data['path'],$data['file_nmae']);
+  $rest=base64_image_content($data['base64data'],$data['path'],$data['file_name']);
   echo json_encode($rest);
 
 /**
